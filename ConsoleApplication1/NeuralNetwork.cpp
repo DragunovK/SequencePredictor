@@ -12,9 +12,11 @@ std::function<double(double)> sigmoid = [](const double& arg) {
 
 void NeuralNetwork::learn()
 {
-	for (size_t learningIteration = 1; learningIteration <= maxAllowedIterations; learningIteration++)
+	double totalMSE = 0.0;
+	size_t learningIteration = 1;
+
+	for (; learningIteration <= maxAllowedIterations; learningIteration++)
 	{
-		
 #ifdef set_learning_context_to_zero
 		context = 0;
 #endif // set_context_to_zero
@@ -25,31 +27,35 @@ void NeuralNetwork::learn()
 			auto Xi = X.getRow(xIndex);  // Input layer
 			Xi.pushBack(context, false); // Insert context into input layer
 			
-			auto Hi = (Xi * W).function(sigmoid); // Hidden layer
-			auto Yi = (Hi * V).function(sigmoid); // Output layer (single neuron)
+			auto Hi = (Xi * W - Ti).function(sigmoid); // Hidden layer
+			auto Yi = (Hi * V - T).function(sigmoid);  // Output layer (single neuron)
 			
 			context = Yi.at(0, 0);
-			auto delta = context - Y.at(xIndex, 0);
+			auto delta = context - Y.at(xIndex, 0); // Error
 
 			auto Hit = Hi.transpose();
 			W -= learningRate * delta * (V.elementwiseMult(Hit.elementwiseMult(1 - Hit)) * Xi).transpose();
 			V -= learningRate * delta * Hi.transpose();
+
+#ifdef threshold
+			Ti += learningRate * delta * (V.elementwiseMult(Hit.elementwiseMult(1 - Hit))).transpose();
+			T += learningRate * delta;
+#endif // threshold
 		}
 
 #ifdef set_learning_context_to_zero
 		context = 0;
 #endif // set_context_to_zero
 
-		double totalMSE = 0.0;
-		
+		totalMSE = 0.0;
 		// Counting error
 		for (size_t xIndex = 0; xIndex < X.rowsNumber(); xIndex++)
 		{
 			auto Xi = X.getRow(xIndex);
 			Xi.pushBack(context, false);
 
-			auto Hi = (Xi * W).function(sigmoid);
-			auto Yi = (Hi * V).function(sigmoid);
+			auto Hi = (Xi * W - Ti).function(sigmoid);
+			auto Yi = (Hi * V - T).function(sigmoid);
 
 			context = Yi.at(0, 0);
 			auto delta = context - Y.at(xIndex, 0);
@@ -62,12 +68,10 @@ void NeuralNetwork::learn()
 		std::cout << "Weights:\n" << "W " << W.toString() << "\nV " << V.toString() << std::endl;
 #endif // learning_debug
 
-		if (totalMSE <= maxAllowedError)
-		{
-			std::cout << "Training complete within " << std::to_string(learningIteration) << " iterations. Final MSE: " + std::to_string(totalMSE) << std::endl;
-			break;
-		}
+		if (totalMSE <= maxAllowedError) break;
 	}
+
+	std::cout << "Training complete within " << std::to_string(learningIteration) << " iterations. Final MSE: " + std::to_string(totalMSE) << std::endl;
 }
 
 NeuralNetwork::NeuralNetwork(const SimpleMatrix& X, 
@@ -88,6 +92,9 @@ NeuralNetwork::NeuralNetwork(const SimpleMatrix& X,
 	W = SimpleMatrix(X.colsNumber() + 1, numberOfHiddenLayerNeurons, -1, 1);
 	V = SimpleMatrix(numberOfHiddenLayerNeurons, 1, -1, 1);
 
+	T = SimpleMatrix(1, 1);
+	Ti = SimpleMatrix(1, numberOfHiddenLayerNeurons);
+
 	learn();
 }
 
@@ -105,8 +112,8 @@ SimpleMatrix NeuralNetwork::predict(const size_t& predictionsNumber)
 		auto Xi = X_.getSubRow(0, i, X_.colsNumber());
 		Xi.pushBack(context, false);
 
-		auto Hi = (Xi * W).function(sigmoid);
-		auto Yi = (Hi * V).function(sigmoid);
+		auto Hi = (Xi * W - Ti).function(sigmoid);
+		auto Yi = (Hi * V - T).function(sigmoid);
 
 		context = Yi.at(0, 0);
 		predictions.setElement(0, i, context);

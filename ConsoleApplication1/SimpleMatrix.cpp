@@ -1,5 +1,5 @@
 /**
-* Created by Kirill Dragunov on 11 nov. 2020 20:58:17
+* Created by Kirill Dragunov on 30 oct. 2020 10:56:03
 */
 
 #include "SimpleMatrix.h"

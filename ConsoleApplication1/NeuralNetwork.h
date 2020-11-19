@@ -11,6 +11,9 @@ class NeuralNetwork
 	SimpleMatrix V;
 	SimpleMatrix X;
 	SimpleMatrix Y;
+
+	SimpleMatrix T;
+	SimpleMatrix Ti;
 	
 	double context;
 	

@@ -31,7 +31,7 @@ void generateSequenceAndReference(const size_t& option, const size_t &sequenceSi
 		break;
 	case 2: //Factorial function
 		for (size_t i = 0; i < sequenceSize + predictionsNumber; i++)
-			S.setElement(0, i, tgamma(i + 1) / 1000000);
+			S.setElement(0, i, tgamma(i + 1) / 10000000);
 		break;
 	case 3: //Periodic function
 		for (size_t i = 0; i < sequenceSize + predictionsNumber; i++)
@@ -57,7 +57,7 @@ int main()
 {
 	SimpleMatrix sequence;
 	SimpleMatrix reference;
-	generateSequenceAndReference(5, 10, sequence, reference, 5);
+	generateSequenceAndReference(3, 10, sequence, reference, 5);
 	std::cout << "Sequence" << sequence.toString() << std::endl;
 
 	SimpleMatrix X;
@@ -75,8 +75,8 @@ int main()
 	);
 
 	SimpleMatrix predictions = JordanNetwork.predict(Configuration::number_of_predictions);
-	std::cout << "Predictions: " << predictions.toString() << std::endl;
-	std::cout << "Reference: " << reference.toString() << std::endl;
+	std::cout << "Predictions" << predictions.toString() << std::endl;
+	std::cout << "Reference" << reference.toString() << std::endl;
 
 	return 0;
 }
