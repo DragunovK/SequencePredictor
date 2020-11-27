@@ -560,7 +560,7 @@ std::string SimpleMatrix::toString() const
 	for (size_t i = 0; i < rows; i++)
 	{
 		for (size_t j = 0; j < cols; j++)
-			resultString += (std::to_string(this->matrix[i][j]) + "\t\t");
+			resultString += (std::to_string(this->matrix[i][j]) + "  ");
 
 		resultString.pop_back();
 		resultString += '\n';

@@ -1,0 +1,7 @@
+.vs/
+*.sln
+x64/
+ConsoleApplication1/x64/
+ConsoleApplication1/*.vcxproj
+ConsoleApplication1/*.vcxproj.filters
+ConsoleApplication1/*.vcxproj.user

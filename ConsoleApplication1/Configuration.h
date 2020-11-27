@@ -26,11 +26,13 @@
 
 struct Configuration
 {
+	static inline const size_t max_allowed_iterations = 1000000;
 	static inline const double max_error = 0.0001;
 	static inline const double learning_rate = 0.05;
-	static inline const size_t number_of_hidden_layer_neurons = 5;
-	static inline const size_t max_allowed_iterations = 1000000;
+	static inline const size_t number_of_hidden_layer_neurons = 6;
+	static inline const size_t learning_matrix_columns = 4;
+	static inline const size_t sequence_option = 1;
+	static inline const size_t initial_sequence_size = 10;
 	static inline const size_t number_of_predictions = 5;
-	static inline const size_t learning_matrix_columns = 3;
 };
 
